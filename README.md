@@ -8,5 +8,5 @@
   [Repository](https://github.com/bygentry/AN588_Zombies_gentrym1)
 #### [Homework 4](https://bygentry.github.io/display/)
   [Repository](https://github.com/bygentry/AN588_Malfunction_gentrym1)
-#### [Homework 5]()
+#### [Homework 5](https://bygentry.github.io/display/gentrym1_OriginalHomeworkCode_05.html)
   [Repository](https://github.com/bygentry/AN588_Boots_gentrym1)
