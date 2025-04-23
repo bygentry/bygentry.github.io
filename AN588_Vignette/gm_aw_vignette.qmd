@@ -8,6 +8,7 @@ format:
     toc-depth: 2
     toc-location: left
     df-print: kable
+    style: css
 editor: visual
 ---
 
@@ -519,32 +520,40 @@ tidy.data <- d[complete.cases(d[ , c(5, 8:10)]), ]
 
 First, we must set seed for reproducibility.
 
-```{r} set.seed(482)}
+```{r}
+#set.seed(482)
 ```
 
 Now, we nee to split the data into training and test. We'll use 70% for training and 30% for testing.
 
-```{r} train_index <- sample(1:nrow(tidy.data), 0.7 * nrow(tidy.data))  train_data <- tidy.data[train_index, ]  test_data <- tidy.data[-train_index, ]}
+```{r}
+#train_index <- sample(1:nrow(tidy.data), 0.7 * nrow(tidy.data))  
+#train_data <- tidy.data[train_index, ]  
+#test_data <- tidy.data[-train_index, ]
 ```
 
 Now we will fit the model for all for features.
 
-```{r} qda_model <- qda(Species ~ ., data = train_data)}
+```{r}
+#qda_model <- qda(Species ~ ., data = train_data)
 ```
 
 To view the model:
 
-```{r} print(qda_model)}
+```{r}
+#print(qda_model)
 ```
 
 We first want to make prediction, based on the test set.
 
-```{r} qda_pred <- predict(qda_model, test_data)}
+```{r}
+#qda_pred <- predict(qda_model, test_data)
 ```
 
 Next, display predicted classes.
 
-```{r} head(qda_predclass)}
+```{r}
+#head(qda_predclass)
 ```
 
 Create a confusion matrix and a print confusion matrix.
@@ -555,10 +564,15 @@ confusion matrix can be made as a table, to compare the positives and negatives 
 
 A print confusion matrix refers to the act of generating the confusion matrix table.
 
-```{r} conf_matrix <- table(Predicted = qda_pred$class, Actual = test_data$Species) print(conf_matrix)}
+```{r}
+#conf_matrix <- table(Predicted = qda_pred$class,
+#                     Actual = test_data$Species) 
+#print(conf_matrix)
 ```
 
 Finally, check for accuracy.
 
-```{r} accuracy <- sum(diag(conf_matrix)) / sum(conf_matrix)  cat("Accuracy:", round(accuracy * 100, 2), "%\n")}
+```{r}
+#accuracy <- sum(diag(conf_matrix)) / sum(conf_matrix)  
+#cat("Accuracy:", round(accuracy * 100, 2), "%\n")
 ```
