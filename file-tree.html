@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>File Tree</title>
+  <style>
+    ul { list-style-type: none; }
+    li::before { content: "📄 "; }
+  </style>
+</head>
+<body>
+  <h1>File Tree</h1>
+  <ul id="file-list"></ul>
+
+  <script>
+    const owner = "bygentry";
+    const repo = "display";
+    const path = ""; // "" for root
+    const listEl = document.getElementById("file-list");
+
+    fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`)
+      .then(response => response.json())
+      .then(data => {
+        data.forEach(item => {
+          const li = document.createElement("li");
+          const a = document.createElement("a");
+          a.href = `https://bygentry.github.io//${item.path}`;
+;
+          a.textContent = item.name;
+          li.appendChild(a);
+          listEl.appendChild(li);
+        });
+      });
+  </script>
+</body>
+</html>
