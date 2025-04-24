@@ -9,6 +9,7 @@ layout: default
       <time datetime="{{ page.date | date_to_xmlschema }}">
         {%- assign date_format = "%b %-d, %Y" -%}
         {{ page.date | date: date_format }}
+          {% last_modified_at %}
       </time>
       {%- if page.author -%}
         • {{ page.author }}
