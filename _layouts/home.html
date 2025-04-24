@@ -9,10 +9,12 @@ layout: default
     <h1>{{ page.title }}</h1>
   </header>
   {%- endif -%}
+ <div class="main-content">
+      {{ content }} <!-- This is where the page-specific content will be inserted -->
+    </div>
+  </div>
 
-<body>
-
-  <div class="sidebar-container">
+<div class="sidebar-container">
     <nav class="sidebar">
       <h2>Projects</h2>
 
@@ -26,7 +28,6 @@ layout: default
         <li>Discriminant Analysis Module</li>
         <li>Analysis Recreation Project</li>
       </ul>
-
       <h3>Future Section</h3>
       <ul>
         <li>Project A</li>
@@ -35,9 +36,6 @@ layout: default
 
     </nav>
 
-    <div class="main-content">
-      {{ content }} <!-- This is where the page-specific content will be inserted -->
-    </div>
   </div>
 
   {%- if site.posts.size > 0 -%}
