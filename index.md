@@ -38,12 +38,6 @@ title: Analysis Portfolio
 
 [Bootstrap4Pages Documentation](https://nicolas-van.github.io/bootstrap-4-github-pages/).
 
-
-
-## License
-
-[See the license file.](./LICENSE.md)
-
 ## Customization Guide
 
 ### Change your theme
