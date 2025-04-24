@@ -13,7 +13,7 @@ title: Analysis Portfolio
 ### [Homework 2](https://bygentry.github.io/AN588/HTMLs/homework2.html)
 ### [Homework 3](https://bygentry.github.io/AN588/HTMLs/homework3.html)
 ### Homework 4
-### Homework 5
+### [Homework 5](https://bygentry.github.io/AN588/HTMLs/homework5.html)
 ### Discriminant Analysis Module
 ### Analysis Recreation Project
 
