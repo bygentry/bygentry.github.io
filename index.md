@@ -3,18 +3,24 @@ layout: home
 title: Analysis Portfolio
 ---
 
-## Data Analysis in R
-    bygentry
-    last update: 
+## Data Analysis in R  
+**bygentry**  
+_Last update:_ {{ page.last_modified_at | date: "%b %-d, %Y" }}
+
+---
 
 ### AN588
-[Homework 1](https://bygentry.github.io/AN588/HTMLs/homework1.html) <b>
-[Homework 2](https://bygentry.github.io/AN588/HTMLs/homework2.html) \n
-[Homework 3](https://bygentry.github.io/AN588/HTMLs/homework3.html) \n
-Homework 4 \n
-[Homework 5](https://bygentry.github.io/AN588/HTMLs/homework5.html) \n
-Discriminant Analysis Module
-Analysis Recreation Project
+
+<ul>
+  <li><a href="https://bygentry.github.io/AN588/HTMLs/homework1.html">Homework 1</a></li>
+  <li><a href="https://bygentry.github.io/AN588/HTMLs/homework2.html">Homework 2</a></li>
+  <li><a href="https://bygentry.github.io/AN588/HTMLs/homework3.html">Homework 3</a></li>
+  <li>Homework 4</li>
+  <li><a href="https://bygentry.github.io/AN588/HTMLs/homework5.html">Homework 5</a></li>
+  <li>Discriminant Analysis Module</li>
+  <li>Analysis Recreation Project</li>
+</ul>
+
 
 
 [Bootstrap4Pages Documentation](https://nicolas-van.github.io/bootstrap-4-github-pages/).
