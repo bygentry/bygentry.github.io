@@ -3,52 +3,6 @@ layout: home
 title: Analysis Portfolio
 ---
 
-<style>
-  .sidebar-container {
-    display: flex;
-    flex-direction: row;
-    gap: 2rem;
-  }
-
-  .sidebar {
-    width: 250px;
-    padding: 1rem;
-    background-color: #f5f5f5;
-    border-right: 1px solid #ccc;
-  }
-
-  .sidebar h3 {
-    margin-top: 1.5rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .sidebar ul {
-    list-style-type: none;
-    padding-left: 0;
-  }
-
-  .sidebar li {
-    margin-bottom: 0.5rem;
-  }
-
-  .main-content {
-    flex: 1;
-    padding: 1rem;
-  }
-
-  @media (max-width: 768px) {
-    .sidebar-container {
-      flex-direction: column;
-    }
-
-    .sidebar {
-      width: 100%;
-      border-right: none;
-      border-bottom: 1px solid #ccc;
-    }
-  }
-</style>
-
 <div class="sidebar-container">
   <nav class="sidebar">
     <h2>Projects</h2>
@@ -64,10 +18,9 @@ title: Analysis Portfolio
       <li>Analysis Recreation Project</li>
     </ul>
 
-    <h3>Future Section</h3>
+    <h3>Coming soon...</h3>
     <ul>
-      <li>Project A</li>
-      <li>Project B</li>
+      <li>null</li>
     </ul>
 
   </nav>
