@@ -1,0 +1,196 @@
+---
+title: "Boots!"
+subtitle: "Bootstrapping Standard Errors and CIs for Linear Models"
+author: "Gentry M"
+format: 
+  html:
+    toc: true
+    toc-location: left
+    theme: minty
+    df-print: paged
+    code-overflow: wrap
+editor: visual
+---
+
+## Preliminaries
+
+```{r}
+#| label: Packages
+#| message: false
+#| code-fold: true
+
+library(curl)
+library(manipulate)
+library(ggplot2)
+library(broom)
+library(lmtest)
+library(tidyverse)
+```
+
+```{r}
+#| label: Data
+#| code-fold: show
+
+d <- curl("https://raw.githubusercontent.com/fuzzyatelin/fuzzyatelin.github.io/refs/heads/master/AN588_Spring25/KamilarAndCooperData.csv")
+df <- read.csv(d, header = TRUE, sep = ",", stringsAsFactors = FALSE)
+head(df)
+```
+
+## Introduction
+
+When we initially discussed the central limit theorem and confidence intervals, we showed how we could use bootstrapping to estimate standard errors and confidence intervals around certain parameter values, like the mean. Using bootstrapping, we could also do the same for estimating standard errors and CIs around regression parameters, such as β coefficients.
+
+## Challenge 1
+
+Using the “KamilarAndCooperData.csv” dataset, run a linear regression looking at log(HomeRange_km2) in relation to log(Body_mass_female_mean) and report your coeffiecients (slope and intercept).
+
+```{r}
+#| label: Linear Regression
+#| output: false
+
+# creating new reference vars
+range <- df$HomeRange_km2
+f_mass <- df$Body_mass_female_mean
+
+# create a linear model, m1, with relation y ~ x for the variables log(HomeRange_km2) and log(Body_mass_female_mean)
+m1 <- lm(log(range) ~ log(f_mass), data = df)
+
+# report beta coefficients
+print(m1$coefficients)
+```
+
+```         
+(Intercept)   log(f_mass)    
+-9.441231     1.036432 
+```
+
+## Challenge 2
+
+Then, use bootstrapping to sample from your data 1000 times with replacement, each time fitting the same model and calculating the same coefficients. This generates a sampling distribution for each ββ coefficient.
+
+-   Estimate the standard error for each of your ββ coefficients as the standard deviation of the sampling distribution from your bootstrap and determine the 95% CI for each of your ββ coefficients based on the appropriate quantiles from your sampling distribution.
+
+```{r}
+#| label: Bootstrapping
+
+# Set number of bootstraps, n
+n <- 1000
+
+# Store coefficients from each bootstrap
+boot_coefs <- replicate(n, {
+  s <- df %>% sample_frac(replace = TRUE)
+  coef(lm(log(HomeRange_km2) ~ log(Body_mass_female_mean), data = s))
+}, simplify = "matrix")
+
+# Convert to data frame
+boot_df <- as.data.frame(t(boot_coefs))
+colnames(boot_df) <- c("Intercept", "Slope")
+
+# Estimate SEs and CIs
+boot_se <- apply(boot_df, 2, sd)
+boot_ci <- apply(boot_df, 2, quantile, probs = c(0.025, 0.975))
+
+list(SE = boot_se, CI = boot_ci)
+```
+
+-   How does the former compare to the SE estimated from your entire dataset using the formula for standard error implemented in `lm()`?
+
+```{r}
+#| label: Comparing SEs and CIs
+#| code-fold: true
+#| output: false
+
+list(LM.SE =summary(m1)$coefficients[, "Std. Error"], Boot.SE = boot_se); list(LM.CI = confint(m1), Boot.CI = boot_ci)
+```
+
+```         
+            LM SE        Boot SE  
+Intercept   0.67293459   0.58493938   
+Slope       0.08487709   0.07572467
+```
+
+```         
+                2.5 %        97.5 %
+LM Intercept    -10.7720889  -8.110374
+LM Slope        0.8685707    1.204292 
+
+Boot Intercept  -10.577449   -8.301759
+Boot Slope      0.8894471    1.1893182
+```
+
+-   How does the latter compare to the 95% CI estimated from your entire dataset?
+
+    -   The CI calculated using bootstrapping is within a 3% margin of the 2.5% end of the calculated CI and within a 1% margin of the 97.5% end of the calculated CI.
+
+## Extra Credit
+
+### EC1
+
+Write a FUNCTION that takes as its arguments a dataframe, “d”, a linear model, “m” (as a character string, e.g., “logHR\~logBM”), a user-defined confidence interval level, “conf.level” (with default = 0.95), and a number of bootstrap replicates, “n” (with default = 1000). Your function should return a dataframe that includes: beta coefficient names; beta coefficients, standard errors, and upper and lower CI limits for the linear model based on your entire dataset; and mean beta coefficient estimates, SEs, and CI limits for those coefficients based on your bootstrap.
+
+```{r}
+#| label: Bonus 1 Function
+
+boots_model <- function(d, m, conf.level = 0.95, n = 1000){
+  # convert string to formula
+  m <- as.formula(m)
+  
+  # create model using formula and data parameters
+  model <- lm(m, data = d)
+  model_sm <- tidy(model, conf.int = TRUE, conf.level = conf.level)
+  
+  boot_coefs <- replicate(n, {
+  s <- df %>% sample_frac(replace = TRUE)
+  coef(lm(m, data = s))
+}, simplify = "matrix")
+  
+  boot_df <- as.data.frame(t(boot_coefs))
+colnames(boot_df) <- model_sm$term
+  boot_sm <- boot_df %>% 
+    summarise(across(everything(), list(
+      mean = mean,
+      se = sd, 
+      lower = ~ quantile(.x, (1-conf.level)/2),
+      upper = ~ quantile(.x, 1 - (1 - conf.level)/2)),
+      .names = "{.col}_{.fn}"))
+  
+  summary <- bind_cols(
+    model_sm %>% select(term, estimate, std.error, conf.low, conf.high), boot_sm
+  )
+  
+  return(summary)
+}
+```
+
+### EC2
+
+Graph each beta value from the linear model and its corresponding mean value, lower CI and upper CI from a bootstrap as a function of number of bootstraps from 10 to 200 by 10s. HINT: the beta value from the linear model will be the same for all bootstraps and the mean beta value may not differ that much!
+
+```{r}
+#| label: Bonus 2 Graphing
+#| code-fold: true
+
+boots <- seq(10, 200, by = 10)
+slope_est <- map_df(boots, function(n) {
+  coefs <- replicate(n, {
+    s <- df %>% sample_frac(replace = TRUE)
+    coef(lm(log(range) ~ log(f_mass), data = s))[2]
+  })
+  tibble(
+    n = n,
+    mean = mean(coefs),
+    lower = quantile(coefs, 0.025),
+    upper = quantile(coefs, 0.975)
+  )
+})
+
+ggplot(slope_est, aes(x = n, y = mean)) +
+  geom_line(color = "blue") +
+  geom_ribbon(aes(ymin = lower, ymax = upper), alpha = 0.2, fill = "blue") +
+  geom_hline(yintercept = coef(m1)[2], linetype = "dashed", color = "red") + 
+  labs(
+    title = "Bootstrap CI Convergence for Slope Coefficient",
+    x = "Number of Bootstraps",
+    y = "Slope Estimate"
+  ) + theme_bw()
+```
