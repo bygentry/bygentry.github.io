@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: home
 title: Analysis Portfolio
 ---
 
@@ -8,11 +8,11 @@ title: Analysis Portfolio
     last update: 
 
 ### AN588
-[Homework 1](https://bygentry.github.io/AN588/HTMLs/homework1.html)
-[Homework 2](https://bygentry.github.io/AN588/HTMLs/homework2.html)
-[Homework 3](https://bygentry.github.io/AN588/HTMLs/homework3.html)
-Homework 4
-[Homework 5](https://bygentry.github.io/AN588/HTMLs/homework5.html)
+[Homework 1](https://bygentry.github.io/AN588/HTMLs/homework1.html) <b>
+[Homework 2](https://bygentry.github.io/AN588/HTMLs/homework2.html) \n
+[Homework 3](https://bygentry.github.io/AN588/HTMLs/homework3.html) \n
+Homework 4 \n
+[Homework 5](https://bygentry.github.io/AN588/HTMLs/homework5.html) \n
 Discriminant Analysis Module
 Analysis Recreation Project
 
