@@ -28,6 +28,11 @@ repository: "bygentry/bygentry.github.io"
 plugins:
   - jekyll-feed
   - jekyll-sitemap
+  - jekyll-last-modified-at
+
+# Optional. The default date format, used if none is specified in the tag.
+last-modified-at:
+    date-format: '%d-%b-%y'
 
 # A list of the pages to display in the navigation bar
 header_pages:
