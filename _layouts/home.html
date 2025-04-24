@@ -10,9 +10,35 @@ layout: default
   </header>
   {%- endif -%}
 
-  <section>
-    {{ content }}
-  </section>
+<body>
+
+  <div class="sidebar-container">
+    <nav class="sidebar">
+      <h2>Projects</h2>
+
+      <h3>AN588</h3>
+      <ul>
+        <li><a href="https://bygentry.github.io/AN588/HTMLs/homework1.html">Homework 1</a></li>
+        <li><a href="https://bygentry.github.io/AN588/HTMLs/homework2.html">Homework 2</a></li>
+        <li><a href="https://bygentry.github.io/AN588/HTMLs/homework3.html">Homework 3</a></li>
+        <li>Homework 4</li>
+        <li><a href="https://bygentry.github.io/AN588/HTMLs/homework5.html">Homework 5</a></li>
+        <li>Discriminant Analysis Module</li>
+        <li>Analysis Recreation Project</li>
+      </ul>
+
+      <h3>Future Section</h3>
+      <ul>
+        <li>Project A</li>
+        <li>Project B</li>
+      </ul>
+
+    </nav>
+
+    <div class="main-content">
+      {{ content }} <!-- This is where the page-specific content will be inserted -->
+    </div>
+  </div>
 
   {%- if site.posts.size > 0 -%}
     <p class="h4">{{ page.list_title | default: "Posts" }}</p>
