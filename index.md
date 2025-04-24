@@ -3,6 +3,13 @@ layout: home
 title: Analysis Portfolio
 ---
 
+  <div class="main-content">
+    <h2>Data Analysis in R</h2>
+    <p><strong>bygentry</strong></p>
+    <p><em>Last update:</em> April 23, 2025</p>
+    <p>Welcome to my portfolio! Use the sidebar to navigate through project submissions and analysis modules.</p>
+  </div>
+
 <div class="sidebar-container">
   <nav class="sidebar">
     <h2>Projects</h2>
@@ -24,14 +31,6 @@ title: Analysis Portfolio
     </ul>
 
   </nav>
-
-  <div class="main-content">
-    <h2>Data Analysis in R</h2>
-    <p><strong>bygentry</strong></p>
-    <p><em>Last update:</em> April 23, 2025</p>
-    <p>Welcome to my portfolio! Use the sidebar to navigate through project submissions and analysis modules.</p>
-  </div>
-
 </div>
 
 
