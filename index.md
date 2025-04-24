@@ -26,14 +26,12 @@ title: Analysis Portfolio
   </nav>
 
   <div class="main-content">
-    ## Data Analysis in R  
-    **bygentry**  
-    _Last update:_ {{ page.last_modified_at | date: "%b %-d, %Y" }}
-
-    ---
-
-    Welcome to my portfolio! Use the sidebar to navigate through project submissions and analysis modules.
+    <h2>Data Analysis in R</h2>
+    <p><strong>bygentry</strong></p>
+    <p><em>Last update:</em> April 23, 2025</p>
+    <p>Welcome to my portfolio! Use the sidebar to navigate through project submissions and analysis modules.</p>
   </div>
+
 </div>
 
 
@@ -47,10 +45,6 @@ title: Analysis Portfolio
 [See the license file.](./LICENSE.md)
 
 ## Customization Guide
-
-### Modify the configuration
-
-You should at least edit the `_config.yml` file to edit your website's metadata, like the title, description and repository URL.
 
 ### Change your theme
 
