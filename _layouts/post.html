@@ -1,16 +1,26 @@
 ---
 layout: default
 ---
+
 <article>
 
   <header>
     <h1>{{ page.title | escape }}</h1>
     <p class="text-muted">
+      {%- assign date_format = "%b %-d, %Y" -%}
+      Published: 
       <time datetime="{{ page.date | date_to_xmlschema }}">
-        {%- assign date_format = "%b %-d, %Y" -%}
         {{ page.date | date: date_format }}
-          {% last_modified_at %}
       </time>
+
+      {%- if page.last_modified_at -%}
+        <br>
+        Last updated: 
+        <time datetime="{{ page.last_modified_at | date_to_xmlschema }}">
+          {{ page.last_modified_at | date: date_format }}
+        </time>
+      {%- endif -%}
+
       {%- if page.author -%}
         • {{ page.author }}
       {%- endif -%}
