@@ -1,20 +1,168 @@
+---
+layout: default
+---
+
 <!DOCTYPE html>
-<html lang="{{ page.lang | default: site.lang | default: "en" }}">
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ page.title }}</title>
 
-  {%- include head.html -%}
+  <!-- Add any necessary meta tags or links to stylesheets -->
 
-  <body>
+  <style>
+    /* Container to hold sidebar and main content */
+    .sidebar-container {
+      display: flex;
+      flex-direction: row;
+      min-height: 100vh;
+      position: relative; /* This ensures sidebar stays in position */
+    }
 
-    {%- include header.html -%}
+    /* Sidebar styling */
+    .sidebar {
+      width: 250px;
+      padding: 1rem;
+      background-color: #f5f5f5;
+      border-right: 1px solid #ccc;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      z-index: 10;
+      overflow-y: auto;
+      transition: all 0.3s ease;
+    }
 
-    <div class="py-5">
-      <div class="container page-content">
-          {{ content }}
-      </div>
-    </div>
+    .sidebar h3 {
+      cursor: pointer;
+      margin-top: 1.5rem;
+      margin-bottom: 0.5rem;
+      font-size: 1.1rem;
+    }
 
-    {%- include footer.html -%}
+    .collapsible-section {
+      list-style-type: none;
+      padding-left: 0;
+      display: none; /* Hide collapsible sections by default */
+    }
 
-  </body>
+    .collapsible-header:after {
+      content: " ▼";
+      font-size: 0.8rem;
+      color: #777;
+    }
 
+    .collapsible-header.open:after {
+      content: " ▲";
+    }
+
+    /* Main content area */
+    .main-content {
+      margin-left: 250px;
+      padding: 1rem;
+      flex: 1;
+      min-height: 100vh;
+      margin-top: 2rem; /* Space to avoid content overlapping with fixed sidebar */
+    }
+
+    @media (max-width: 768px) {
+      .sidebar-container {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        position: static;
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #ccc;
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+    }
+  </style>
+
+</head>
+<body>
+
+  <div class="sidebar-container">
+    <nav class="sidebar">
+      <h2>Projects</h2>
+
+      <h3 class="collapsible-header" onclick="toggleSection('an588')">AN588</h3>
+      <ul id="an588" class="collapsible-section">
+        <li><a href="https://bygentry.github.io/AN588/HTMLs/homework1.html">Homework 1</a></li>
+        <li><a href="https://bygentry.github.io/AN588/HTMLs/homework2.html">Homework 2</a></li>
+        <li><a href="https://bygentry.github.io/AN588/HTMLs/homework3.html">Homework 3</a></li>
+        <li>Homework 4</li>
+        <li><a href="https://bygentry.github.io/AN588/HTMLs/homework5.html">Homework 5</a></li>
+        <li>Discriminant Analysis Module</li>
+        <li>Analysis Recreation Project</li>
+      </ul>
+
+      <h3 class="collapsible-header" onclick="toggleSection('future')">Future Section</h3>
+      <ul id="future" class="collapsible-section">
+        <li>Project A</li>
+        <li>Project B</li>
+      </ul>
+
+    </nav>
+  </div>
+
+  <div class="main-content">
+    {%- if page.title -%}
+    <header>
+      <h1>{{ page.title }}</h1>
+    </header>
+    {%- endif -%}
+
+    {{ content }} <!-- This is where the page-specific content will be inserted -->
+  </div>
+
+  {%- if site.posts.size > 0 -%}
+    <p class="h4">{{ page.list_title | default: "Posts" }}</p>
+    <ul class="list-unstyled">
+      {%- for post in site.posts -%}
+      <li>
+        <span class="text-muted">
+          {%- assign date_format = "%b %-d, %Y" -%}
+          {{ post.date | date: date_format }}
+        </span>
+        <p class="h5">
+          <a href="{{ post.url | relative_url }}">
+            {{ post.title | escape }}
+          </a>
+        </p>
+        {%- if site.show_excerpts -%}
+          {{ post.excerpt }}
+        {%- endif -%}
+      </li>
+      {%- endfor -%}
+    </ul>
+
+    <p class="rss-subscribe">subscribe <a href="{{ "/feed.xml" | relative_url }}">via RSS</a></p>
+  {%- endif -%}
+
+  <!-- Add your custom JavaScript -->
+  <script>
+    // Function to toggle collapsible sections
+    function toggleSection(id) {
+      var section = document.getElementById(id);
+      var header = section.previousElementSibling;
+      
+      // Toggle the visibility of the section
+      if (section.style.display === "none" || section.style.display === "") {
+        section.style.display = "block"; // Show the section
+        header.classList.add("open");
+      } else {
+        section.style.display = "none"; // Hide the section
+        header.classList.remove("open");
+      }
+    }
+  </script>
+
+</body>
 </html>
