@@ -1,48 +1,30 @@
 ---
 layout: page
-title: Bootstrap 4 Github Pages
+title: Analysis Portfolio
 ---
 
-[![Github-sponsors](https://img.shields.io/badge/sponsor-30363D?logo=GitHub-Sponsors&logoColor=#EA4AAA)](https://github.com/sponsors/nicolas-van) [![GitHub Repo stars](https://img.shields.io/github/stars/nicolas-van/bootstrap-4-github-pages?style=social)](https://github.com/nicolas-van/bootstrap-4-github-pages)
+# Portfolio
+## Data Analysis in R
+### bygentry
+### last update: 
 
-A [Bootstrap 5](https://getbootstrap.com/) template project for [Github Pages](https://pages.github.com/) and [Jekyll](https://jekyllrb.com/).
+## AN588
+### [Homework 1](https://bygentry.github.io/AN588/HTMLs/homework1.html)
+### [Homework 2](https://bygentry.github.io/AN588/HTMLs/homework2.html)
+### [Homework 3](https://bygentry.github.io/AN588/HTMLs/homework3.html)
+### Homework 4
+### Homework 5
+### Discriminant Analysis Module
+### Analysis Recreation Project
 
-* A full Bootstrap 5 theme usable both on Github Pages and with a standalone Jekyll.
-* Recompiles Bootstrap from SCSS files, which allows to customize Bootstrap's variables and use Bootstrap themes.
-* Full support of Bootstrap's JavaScript plugins.
-* Supports all features of Github Pages and Jekyll.
 
-## Setup Guide
+[Bootstrap4Pages Documentation](https://nicolas-van.github.io/bootstrap-4-github-pages/).
 
-### Create a repository from this template
 
-* [Go to this repository page on Github](https://github.com/nicolas-van/bootstrap-4-github-pages).
-* Click the `Star` button on the top right. (OK, this step is facultative, but that would make you a nice person)
-* Click the `Use this template` button on the top right of the page.
 
-### Choose a name for your repository
+## License
 
-Here we have two possibilities:
-
-* **You want a user or organization website**
-
-  In this case your website's URL will be `http://<your username>.github.io` where `<your username>` is your Github user name.
-
-  Choose the repository name `<your username>.github.io`.
-
-* **You want a project website**
-
-  In this case your website's URL will be `http://<your username>.github.io/<whatever you want>` where `<whatever you want>` can be any valid name for a Github repository.
-
-  Choose the repository name `<whatever you want>`.
-
-### Activate Github Pages on your repository
-
-Go in the `Settings` page of your repository, in the `Github Pages`, under the `Source` parameter, choose `master branch` then `Save`.
-
-### That's it
-
-Your Github Pages website with customizable Bootstrap 5 is now up and running, you can access it using the URL displayed by Github in the `Github Pages` settings.
+[See the license file.](./LICENSE.md)
 
 ## Customization Guide
 
@@ -87,22 +69,6 @@ Please note that, to ensure maximum compatibility with Github Pages, the `Gemfil
 ## Known issues
 
 * Bootstrap 5 should normally be post-processed using [Autoprefixer](https://github.com/postcss/autoprefixer). Even if it is possible to use autoprefixer with Jekyll, it is not possible with a classic Github Pages installation without adding some kind of pre-processing before publication. Since this project mostly aims compatibility with Github Pages I prefer to keep it that way. The consequences of this choice is that some Bootstrap features could not work as expected on older browsers.
-
-## How to contribute
-
-Like this project ? [Consider adding a star on Github](https://github.com/nicolas-van/bootstrap-4-github-pages).
-
-[You can also see the contribution guide](https://github.com/nicolas-van/bootstrap-4-github-pages/blob/master/CONTRIBUTING.md).
-
-## Websites using Bootstrap 4 Github Pages
-
-* [My personal blog](https://nicolas-van.github.io/)
-* [the wavelet's profile](https://thewavelet.github.io/)
-* [William Moore's website](https://will2bill.com/)
-* [roseblood.github.io](https://roseleblood.github.io/)
-* [borislouis.github.io](https://borislouis.github.io/)
-* [dariusnwadike.github.io](https://dariusnwadike.github.io/)
-* [libcoap.net](https://libcoap.net/)
 
 ## Other Github Pages related projects
 
