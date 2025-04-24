@@ -1,37 +1,17 @@
 ---
-layout: home
+layout: default
 title: Analysis Portfolio
 ---
 
-  <div class="main-content">
-    <h2>Data Analysis in R</h2>
-    <p><strong>bygentry</strong></p>
-    <p><em>Last update:</em> April 23, 2025</p>
-    <p>Welcome to my portfolio! Use the sidebar to navigate through project submissions and analysis modules.</p>
-  </div>
+## Data Analysis in R  
+**bygentry**  
+_Last update:_ {{ page.last_modified_at | date: "%b %-d, %Y" }}
 
-<div class="sidebar-container">
-  <nav class="sidebar">
-    <h2>Projects</h2>
+---
 
-    <h3>AN588</h3>
-    <ul>
-      <li><a href="https://bygentry.github.io/AN588/HTMLs/homework1.html">Homework 1</a></li>
-      <li><a href="https://bygentry.github.io/AN588/HTMLs/homework2.html">Homework 2</a></li>
-      <li><a href="https://bygentry.github.io/AN588/HTMLs/homework3.html">Homework 3</a></li>
-      <li>Homework 4</li>
-      <li><a href="https://bygentry.github.io/AN588/HTMLs/homework5.html">Homework 5</a></li>
-      <li>Discriminant Analysis Module</li>
-      <li>Analysis Recreation Project</li>
-    </ul>
+Welcome to my portfolio! Use the sidebar to navigate through project submissions and analysis modules.
 
-    <h3>Coming soon...</h3>
-    <ul>
-      <li>null</li>
-    </ul>
 
-  </nav>
-</div>
 
 
 
