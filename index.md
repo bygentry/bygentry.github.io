@@ -1,15 +1,16 @@
 ---
-layout: default
+layout: home
 title: Analysis Portfolio
 ---
 
-## Data Analysis in R  
+## Data Analysis in R
 **bygentry**  
 _Last update:_ {{ page.last_modified_at | date: "%b %-d, %Y" }}
 
 ---
 
 Welcome to my portfolio! Use the sidebar to navigate through project submissions and analysis modules.
+
 
 
 
