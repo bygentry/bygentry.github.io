@@ -30,6 +30,7 @@ Welcome to my portfolio! Use the sidebar to navigate through project submissions
       <ul>
         <li>temp</li>
       </ul>
+      </nav>
   </div>
 
 
