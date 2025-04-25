@@ -4,37 +4,43 @@ title: Analysis Portfolio
 ---
 
 ## Data Analysis in R
-**bygentry**  
-_Last update:_ {{ page.last_modified_at | date: "%b %-d, %Y" }}
 
----
+**bygentry**\
+*Last update:* {{ page.last_modified_at \| date: "%b %-d, %Y" }}
+
+------------------------------------------------------------------------
 
 Welcome to my portfolio! Use the sidebar to navigate through project submissions and analysis modules.
 
-  <div class="sidebar-container">
-    <nav class="sidebar">
-      <h2>Projects</h2>
+::: sidebar-container
+```         
+<nav class="sidebar">
+  <h2>Projects</h2>
+```
 
-   <h3>AN588</h3>
-      <ul>
-        <li><a href="https://bygentry.github.io/AN588/HTMLs/homework1.html">Homework 1</a></li>
-        <li><a href="https://bygentry.github.io/AN588/HTMLs/homework2.html">Homework 2</a></li>
-        <li><a href="https://bygentry.github.io/AN588/HTMLs/homework3.html">Homework 3</a></li>
-        <li><a href= "https://bygentry.github.io/AN588/HTMLs/homework4.html">Homework 4</a></li>
-        <li><a href="https://bygentry.github.io/AN588/HTMLs/homework5.html">Homework 5</a></li>
-        <li>Discriminant Analysis Module</li>
-        <li>Analysis Recreation Project</li>
-      </ul>
+<h3>AN588</h3>
 
-   <h3>Coming soon...</h3>
-      <ul>
-        <li>temp</li>
-      </ul>
-      </nav>
-  </div>
+```         
+  <ul>
+    <li><a href="https://bygentry.github.io/AN588/HTMLs/homework1.html">Homework 1</a></li>
+    <li><a href="https://bygentry.github.io/AN588/HTMLs/homework2.html">Homework 2</a></li>
+    <li><a href="https://bygentry.github.io/AN588/HTMLs/homework3.html">Homework 3</a></li>
+    <li><a href= "https://bygentry.github.io/AN588/HTMLs/homework4.html">Homework 4</a></li>
+    <li><a href="https://bygentry.github.io/AN588/HTMLs/homework5.html">Homework 5</a></li>
+    <li>Discriminant Analysis Module</li>
+    <li>Analysis Recreation Project</li>
+  </ul>
+```
 
+<h3>Coming soon...</h3>
 
-
+```         
+  <ul>
+    <li>temp</li>
+  </ul>
+  </nav>
+```
+:::
 
 [Bootstrap4Pages Documentation](https://nicolas-van.github.io/bootstrap-4-github-pages/).
 
@@ -48,10 +54,10 @@ You can of course modify anything in the `_includes`, `_layouts` and `_sass` fol
 
 But if you don't know where to start I can recommend you to import a theme from [Bootswatch](https://bootswatch.com/).
 
-* Go on [Bootswatch](https://bootswatch.com/) and choose a theme that you like.
-* Using the top bar, download its `_variables.scss` and `_bootswatch.scss` files.
-* Copy the content of `_variables.scss` in `_sass/_variables.scss`.
-* Copy the content of `_bootswatch.scss` in `_sass/_bootstrap_customization.scss`.
+-   Go on [Bootswatch](https://bootswatch.com/) and choose a theme that you like.
+-   Using the top bar, download its `_variables.scss` and `_bootswatch.scss` files.
+-   Copy the content of `_variables.scss` in `_sass/_variables.scss`.
+-   Copy the content of `_bootswatch.scss` in `_sass/_bootstrap_customization.scss`.
 
 That's it, you now have a totally different appearance for you website.
 
@@ -67,21 +73,20 @@ Editing your website's content or theme directly on Github is completely possibl
 
 To do so:
 
-* Install the [requirements for Jekyll](https://jekyllrb.com/docs/installation/).
-* Type `bundle install` at the root of your project to install the necessary Ruby dependencies.
-* Type `bundle exec jekyll serve` to launch the test Jekyll web server that will re-compile your work if you edit it.
-* You can then open `http://localhost:4000` in your web browser to see your work-in-progress website.
+-   Install the [requirements for Jekyll](https://jekyllrb.com/docs/installation/).
+-   Type `bundle install` at the root of your project to install the necessary Ruby dependencies.
+-   Type `bundle exec jekyll serve` to launch the test Jekyll web server that will re-compile your work if you edit it.
+-   You can then open `http://localhost:4000` in your web browser to see your work-in-progress website.
 
 Please note that, to ensure maximum compatibility with Github Pages, the `Gemfile` of this project references the `github-pages` gem, not Jekyll directly. This implies some differences in behavior compared to the official documentation of Jekyll.
 
 ## Known issues
 
-* Bootstrap 5 should normally be post-processed using [Autoprefixer](https://github.com/postcss/autoprefixer). Even if it is possible to use autoprefixer with Jekyll, it is not possible with a classic Github Pages installation without adding some kind of pre-processing before publication. Since this project mostly aims compatibility with Github Pages I prefer to keep it that way. The consequences of this choice is that some Bootstrap features could not work as expected on older browsers.
+-   Bootstrap 5 should normally be post-processed using [Autoprefixer](https://github.com/postcss/autoprefixer). Even if it is possible to use autoprefixer with Jekyll, it is not possible with a classic Github Pages installation without adding some kind of pre-processing before publication. Since this project mostly aims compatibility with Github Pages I prefer to keep it that way. The consequences of this choice is that some Bootstrap features could not work as expected on older browsers.
 
 ## Other Github Pages related projects
 
 I'm a fan of Github Pages for the possibilities it offers to anyone to publish a website for free. I have multiple projects that could be of interest if that's your case too:
 
-* [Easy Markdown to Github Pages](https://nicolas-van.github.io/easy-markdown-to-github-pages/)
-* [Parcel Github Pages Boilerplate](https://github.com/nicolas-van/parcel-github-pages-boilerplate)
-
+-   [Easy Markdown to Github Pages](https://nicolas-van.github.io/easy-markdown-to-github-pages/)
+-   [Parcel Github Pages Boilerplate](https://github.com/nicolas-van/parcel-github-pages-boilerplate)
