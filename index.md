@@ -11,7 +11,26 @@ _Last update:_ {{ page.last_modified_at | date: "%b %-d, %Y" }}
 
 Welcome to my portfolio! Use the sidebar to navigate through project submissions and analysis modules.
 
+  <div class="sidebar-container">
+    <nav class="sidebar">
+      <h2>Projects</h2>
 
+   <h3>AN588</h3>
+      <ul>
+        <li><a href="https://bygentry.github.io/AN588/HTMLs/homework1.html">Homework 1</a></li>
+        <li><a href="https://bygentry.github.io/AN588/HTMLs/homework2.html">Homework 2</a></li>
+        <li><a href="https://bygentry.github.io/AN588/HTMLs/homework3.html">Homework 3</a></li>
+        <li><a href= "https://bygentry.github.io/AN588/HTMLs/homework4.html">Homework 4</a></li>
+        <li><a href="https://bygentry.github.io/AN588/HTMLs/homework5.html">Homework 5</a></li>
+        <li>Discriminant Analysis Module</li>
+        <li>Analysis Recreation Project</li>
+      </ul>
+
+   <h3>Coming soon...</h3>
+      <ul>
+        <li>temp</li>
+      </ul>
+  </div>
 
 
 
