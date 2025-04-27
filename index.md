@@ -27,7 +27,7 @@ Welcome to my portfolio! Use the sidebar to navigate through project submissions
     <li><a href="https://bygentry.github.io/AN588/HTMLs/homework3.html">Homework 3</a></li>
     <li><a href= "https://bygentry.github.io/AN588/HTMLs/homework4.html">Homework 4</a></li>
     <li><a href="https://bygentry.github.io/AN588/HTMLs/homework5.html">Homework 5</a></li>
-    <li><a href="https://bygentry.github.io/AN588_Vignette/gm_aw_vignette.html">Discriminant Analysis Module</a></li>
+    <li><a href="https://bygentry.github.io/AN588/AN588_Vignette/gm_aw_vignette.html">Discriminant Analysis Module</a></li>
     <li>Analysis Recreation Project</li>
   </ul>
 ```
