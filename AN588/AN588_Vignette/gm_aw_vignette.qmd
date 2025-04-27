@@ -520,6 +520,7 @@ First things first, we'll load in the data that we need and clean it up to get t
 
 ```{r}
 #| label: Loading Data
+#| code-overflow: wrap
 
 # store data from Kamilar and Cooper in holder f 
 f <- curl("https://raw.githubusercontent.com/bygentry/AN588_Vignette/refs/heads/main/KamilarAndCooperData.csv")  
