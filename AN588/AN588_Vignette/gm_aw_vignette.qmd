@@ -9,6 +9,7 @@ format:
     toc-location: left
     df-print: kable
     style: css
+    code-overflow: wrap
 editor: visual
 ---
 
@@ -149,15 +150,35 @@ mu1 <- colMeans(lda_data[lda_data$geno == "A", 1:2])
 mu2 <- colMeans(lda_data[lda_data$geno == "B", 1:2])
 ```
 
-Things get a little tricky when it comes to spread. Because LDA assumes that the data all share a covariance matrix (a.k.a pooled covariance matrix), we can't just use the spread of the raw data. The covariance matrix is computed internally by `lda()`, but it can be computed manually like this:
+Things get a little tricky when it comes to spread. Because LDA assumes that the data all share a covariance matrix, $W$, we can't just use the spread of the raw data. The covariance matrix is computed internally by `lda()`, but it can be computed manually like this:
+
+$$
+ W = \frac{S_1(n_1 - 1) + S_2(n_2 - 1)}{(n_1 + n_2) - 2}
+$$
+
+where
+
+-   $W$ = the pooled covariance matrix
+
+-   $S_1$ = covariance of class 1
+
+-   $S_2$ = covariance of class 2
+
+-   $n_1$ = size of class 1
+
+-   $n_2$ = size of class 2
 
 ```{r}
 #| label: Pooling Covariance
 
 S1 <- cov(lda_data[lda_data$geno == "A", 1:2])
+# covariance of class A in gene x and gene y
 S2 <- cov(lda_data[lda_data$geno == "B", 1:2])
+# covariance of class B in gene x and gene y
 n1 <- sum(lda_data$geno == "A")
+# size of class A
 n2 <- sum(lda_data$geno == "B")
+# size of class B
 
 cov_pooled <- ((n1 - 1)*S1 + (n2 - 1)*S2) / (n1 + n2 - 2)
 
