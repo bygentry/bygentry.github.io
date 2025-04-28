@@ -112,7 +112,7 @@ geno <- sample(c(0, 1, 2), size = n, replace = TRUE)
 gene_x <- rnorm(n, mean = 5 + (2 * (geno == 0)), sd = 1) 
 # produces a distribution that is higher in genotype A individuals
 gene_y <- rnorm(n, mean = 5 + (2 * (geno == 1)), sd = 1)
-# produces a distribution that is higher in genotype A individuals
+# produces a distribution that is higher in genotype B individuals
 gene_z <- rnorm(n, mean = 5 + (2 * (geno == 2)), sd = 1)
 # produces a distribution that is higher in genotype C individuals
 
@@ -511,6 +511,8 @@ fig <- plot_ly(data = ell,
  
 ```
 
+![](images/3d-plot-demo.mp4){fig-align="center"}
+
 ## Challenge 3 - Quadratic Discriminant Analysis
 
 Quadratic discriminant analysis is similar to LDA, but assumes that that each class has its own unique covariance matrix. QDA can be thought of as an extension to LDA, as it is still classifying observations from a set of predictor variables. Since each class has its own, unique covariance matrix, QDA allows for complex, non-linear modeling.
@@ -543,39 +545,51 @@ tidy.data <- d[complete.cases(d[ , c(5, 8:10)]), ]
 First, we must set seed for reproducibility.
 
 ```{r}
-#set.seed(482)
+#| eval: false
+#| echo: true
+set.seed(482)
 ```
 
 Now, we nee to split the data into training and test. We'll use 70% for training and 30% for testing.
 
 ```{r}
-#train_index <- sample(1:nrow(tidy.data), 0.7 * nrow(tidy.data))  
-#train_data <- tidy.data[train_index, ]  
-#test_data <- tidy.data[-train_index, ]
+#| eval: false
+#| echo: true
+train_index <- sample(1:nrow(tidy.data), 0.7 * nrow(tidy.data))  
+train_data <- tidy.data[train_index, ]  
+test_data <- tidy.data[-train_index, ]
 ```
 
 Now we will fit the model for all for features.
 
 ```{r}
-#qda_model <- qda(Species ~ ., data = train_data)
+#| eval: false
+#| echo: true
+qda_model <- qda(Species ~ ., data = train_data)
 ```
 
 To view the model:
 
 ```{r}
-#print(qda_model)
+#| eval: false
+#| echo: true
+print(qda_model)
 ```
 
 We first want to make prediction, based on the test set.
 
 ```{r}
-#qda_pred <- predict(qda_model, test_data)
+#| eval: false
+#| echo: true
+qda_pred <- predict(qda_model, test_data)
 ```
 
 Next, display predicted classes.
 
 ```{r}
-#head(qda_predclass)
+#| eval: false
+#| echo: true
+head(qda_predclass)
 ```
 
 Create a confusion matrix and a print confusion matrix.
@@ -587,14 +601,18 @@ confusion matrix can be made as a table, to compare the positives and negatives 
 A print confusion matrix refers to the act of generating the confusion matrix table.
 
 ```{r}
-#conf_matrix <- table(Predicted = qda_pred$class,
-#                     Actual = test_data$Species) 
-#print(conf_matrix)
+#| eval: false
+#| echo: true
+conf_matrix <- table(Predicted = qda_pred$class,
+                     Actual = test_data$Species) 
+print(conf_matrix)
 ```
 
 Finally, check for accuracy.
 
 ```{r}
-#accuracy <- sum(diag(conf_matrix)) / sum(conf_matrix)  
-#cat("Accuracy:", round(accuracy * 100, 2), "%\n")
+#| eval: false
+#| echo: true
+accuracy <- sum(diag(conf_matrix)) / sum(conf_matrix)  
+cat("Accuracy:", round(accuracy * 100, 2), "%\n")
 ```
