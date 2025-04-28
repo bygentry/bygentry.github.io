@@ -503,10 +503,10 @@ fig <- plot_ly(data = ell,
                 type = 'scatter3d', 
                 mode = 'markers', 
                 marker = list(size = 5)) %>%
-   layout(title = "3D LDA Projection (LD1, LD2, LD3)",
-          scene = list(xaxis = list(title = 'LD1'),
-                       yaxis = list(title = 'LD2'),
-                       zaxis = list(title = 'LD3')))
+   layout(title = "3D LDA Projection",
+          scene = list(xaxis = list(title = 'Gene X'),
+                       yaxis = list(title = 'Gene Y'),
+                       zaxis = list(title = 'Gene Z')))
  fig
  
 ```
