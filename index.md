@@ -1,6 +1,6 @@
 ---
-layout: home
 title: Analysis Portfolio
+layout: default
 ---
 
 ## Data Analysis in R
@@ -12,35 +12,25 @@ title: Analysis Portfolio
 
 Welcome to my portfolio! Use the sidebar to navigate through project submissions and analysis modules.
 
-::: sidebar-container
-```         
-<nav class="sidebar">
-  <h2>Projects</h2>
-```
+###Projects
 
-<h3>AN588</h3>
+####AN588
 
-```         
-  <ul>
-    <li><a href="https://bygentry.github.io/AN588/HTMLs/homework1.html">Homework 1</a></li>
-    <li><a href="https://bygentry.github.io/AN588/HTMLs/homework2.html">Homework 2</a></li>
-    <li><a href="https://bygentry.github.io/AN588/HTMLs/homework3.html">Homework 3</a></li>
-    <li><a href= "https://bygentry.github.io/AN588/HTMLs/homework4.html">Homework 4</a></li>
-    <li><a href="https://bygentry.github.io/AN588/HTMLs/homework5.html">Homework 5</a></li>
-    <li><a href="https://bygentry.github.io/AN588/AN588_Vignette/gm_aw_vignette.html">Discriminant Analysis Module</a></li>
-    <li>Analysis Recreation Project</li>
-  </ul>
-```
+[Homework 1](https://bygentry.github.io/AN588/HTMLs/homework1.html)
 
-<h3>Coming soon...</h3>
+[Homework 2](https://bygentry.github.io/AN588/HTMLs/homework2.html)
 
-```         
-  <ul>
-    <li>temp</li>
-  </ul>
-  </nav>
-```
-:::
+[Homework 3](https://bygentry.github.io/AN588/HTMLs/homework3.html)
+
+[Homework 4](https://bygentry.github.io/AN588/HTMLs/homework4.html)
+
+[Homework 5](https://bygentry.github.io/AN588/HTMLs/homework5.html)
+
+[Discriminant Analysis Module](https://bygentry.github.io/AN588/AN588_Vignette/gm_aw_vignette.html)
+
+Analysis Recreation Project (Coming soon)
+
+## Legacy Content from Template
 
 [Bootstrap4Pages Documentation](https://nicolas-van.github.io/bootstrap-4-github-pages/).
 
@@ -89,4 +79,4 @@ Please note that, to ensure maximum compatibility with Github Pages, the `Gemfil
 I'm a fan of Github Pages for the possibilities it offers to anyone to publish a website for free. I have multiple projects that could be of interest if that's your case too:
 
 -   [Easy Markdown to Github Pages](https://nicolas-van.github.io/easy-markdown-to-github-pages/)
--   [Parcel Github Pages Boilerplate](https://github.com/nicolas-van/parcel-github-pages-boilerplate)
+-   [Parcel Github Pages Boilerplate](https://github.com/nicolas-van/parcel-github-pages-boilerplate) :::
