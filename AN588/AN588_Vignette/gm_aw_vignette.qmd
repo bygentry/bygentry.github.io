@@ -109,9 +109,9 @@ geno <- sample(c(0, 1, 2), size = n, replace = TRUE)
 
 # now the gene expressions
 
-gene_x <- rnorm(n, mean = 5 - (2 * geno), sd = 1) 
-# produces a distribution that is higher in genotype B individuals
-gene_y <- rnorm(n, mean = 5 + (2 * geno), sd = 1)
+gene_x <- rnorm(n, mean = 5 + (2 * (geno == 0)), sd = 1) 
+# produces a distribution that is higher in genotype A individuals
+gene_y <- rnorm(n, mean = 5 + (2 * (geno == 1)), sd = 1)
 # produces a distribution that is higher in genotype A individuals
 gene_z <- rnorm(n, mean = 5 + (2 * (geno == 2)), sd = 1)
 # produces a distribution that is higher in genotype C individuals
@@ -121,7 +121,7 @@ lda_data <- data.frame(
   gene_x = gene_x,
   gene_y = gene_y,
   gene_z = gene_z,
-  geno = factor(geno, labels = c("B", "A", "C"))
+  geno = factor(geno, labels = c("A", "B", "C"))
 )
 
 # and lastly, check the first few rows to make sure everything is right
@@ -505,7 +505,8 @@ fig <- plot_ly(data = ell,
                 marker = list(size = 5)) %>%
    layout(title = "3D LDA Projection (LD1, LD2, LD3)",
           scene = list(xaxis = list(title = 'LD1'),
-                       yaxis = list(title = 'LD2')))
+                       yaxis = list(title = 'LD2'),
+                       zaxis = list(title = 'LD3')))
  fig
  
 ```
@@ -520,7 +521,6 @@ First things first, we'll load in the data that we need and clean it up to get t
 
 ```{r}
 #| label: Loading Data
-#| code-overflow: wrap
 
 # store data from Kamilar and Cooper in holder f 
 f <- curl("https://raw.githubusercontent.com/bygentry/AN588_Vignette/refs/heads/main/KamilarAndCooperData.csv")  
