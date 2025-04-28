@@ -18,7 +18,7 @@ editor: visual
 ### Packages
 
 ```{r}
-#| label: Packages
+#| label: Required Packages
 #| message: false
 
 # data handling
