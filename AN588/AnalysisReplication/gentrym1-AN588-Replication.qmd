@@ -1,0 +1,711 @@
+---
+title: "Data Analysis Replication"
+author: "Gentry Miller"
+format: 
+  html:
+    code-overflow: wrap
+    toc: true
+    toc-location: left
+    toc-depth: 3
+    toc-title: Contents
+    df-print: kable
+    theme: minty
+editor: visual
+---
+
+# The evolution of the adolescent growth spurt: Urinary biomarkers of bone turnover in wild chimpanzees (*Pan troglodytes*)
+
+**Aaron A. Sandel, Jacob D. Negrey, Milja Arponen, Isabelle R. Clark, Jeremy B. Clift, Rachna B. Reddy, Kaisa K. Ivaska**
+
+## Summary
+
+Sandel et al. (2023) investigate how collagen-type 1 cross-linked N-telopeptides (CTX) and osteocalcin vary with age to approximate bone turnover rates throughout a wild chimpanzee's (*Pan troglodytes*) life history. Using urine samples from individuals with known ages, they asses developmental and aging patterns in skeletal metabolism. They found that chimpanzees exhibit sex-specific aging trajectories, with males and females showing different ages of peak turnover rates which reflects differences in growth and aging that are consistent with current hypotheses about the evolution of primate life history.
+
+### Goals
+
+Their specific goal was to quantify age and sex related patterns of bone turnover through urinary biomarker assays. After collecting their data and performing analysis with generalized additive models, they cast out sex as a predictor because it "exhibited minimal effect on either collagen or osteocalcin levels" (Sandel et al. 2023, p. 4-5).
+
+### Data Breakdown
+
+The data consist of two separate .csv files - one for each biomarker. The variables are mostly the same between the two data sets. The variables containing information about the chimpanzee include the individual's ID (name), their sex, the age at which each sample was collected, and the individual's date of birth. The sample-related variables include a unique ID for each sample from each individual, the date and time of collection, the researcher who collected the sample, the substrate from which the sample was collected, creatinine level, specific gravity, and the concentration of the relevant biomarker in both nM and ng/ml.
+
+### Statistical Analysis Methods
+
+The authors used generalized additive models (GAMs) with cubic regression splines to model the concentration of each biomarker as a smooth function of age for both sexes together, only males, and only females for a total of 6 GAMs (2 biomarkers, 3 models each). They then used derivative analysis to identify the ages with the maximum predicted values for bone turnover, which they interpret as supporting evidence for a juvenile growth spurt. Similarly, they used segmented linear regressions to confirm distinct, age-related patterns in bone metabolism and were able to align their findings with the three stages of chimpanzee life history (infant, juvenile, adult).
+
+I intend to replicate all 6 models used in the author's analysis and attempt to replicate the figures presented in the results section of their paper.
+
+## Replication
+
+### Setting up
+
+```{r}
+#| label: setup
+#| echo: true
+#| warning: false
+#| prompt: true
+#| fig.path: "img/"
+```
+
+```{r}
+#| label: setup2
+#| echo: true
+#| message: false
+#| warning: false
+
+source("https://raw.githubusercontent.com/bygentry/AN588_DataAnalysisRecreation_gentrym1/refs/heads/main/scripts/steup.R")
+head(collag1)
+head(osteoc1)
+```
+
+Using our setup script, we load the necessary packages and data before prepping the data for analysis. To prepare the data and maintain consistency with the original analysis,
+
+1.  both .csv files are transformed to tables
+2.  "Morton"'s sample is removed
+3.  the time variable is reformatted to h:m:s
+4.  continuous variables are standardized using Z-transformation
+5.  relevant variables are extracted
+6.  `NA` values are omitted from the data sets.
+
+### Data Wrangling
+
+#### Averaging
+
+Let's take the averages for each individual
+
+```{r}
+#| label: averaging data
+
+coll_data <- collag1 %>%
+  group_by(individualID) %>%
+  summarise(
+    # the mean age across sample collection dates for each individual
+    mean_age = mean(sampleAge),
+    # the mean concentration of collagen (corr. SG) for each individual
+    mean_con = mean(NTXnM_SG),
+    sex = first(Sex)
+  )
+
+ostc_data <- osteoc1 %>% 
+  group_by(individualID) %>% 
+  summarise(
+    # the mean age across sample collection dates for each individual
+    mean_age = mean(sampleAge),
+    # the mean concentration of osteocalcin (corr. SG) for each individual
+    mean_con = mean(uMidOC_SG),
+    sex = first(Sex)
+  )
+```
+
+and make some pointers for easier calls throughout this analysis:
+
+```{r}
+#| label: Creating Pointers
+#| echo: true 
+#| message: false
+
+c_con <- coll_data$mean_con
+c_age <- coll_data$mean_age
+
+o_con <- ostc_data$mean_con
+o_age <- ostc_data$mean_age
+```
+
+#### Box-Cox Transformation
+
+We then apply a Box-Cox transformation to the biomarker concentration data to ensure we meet the assumptions of generalized additive modelling (GAM) and segmented regression (SR) and increase our confidence in the models:
+
+```{r}
+#| label: Box-Cox - Calculating Lambda
+
+# create a plot grid to present the boxcox results side-by-side
+par(mfrow = c(1, 2))
+
+# use Box-Cox from the MASS package to estimate the optimal lambda for approximating normality
+boxcox(lm(c_con ~ c_age))
+title("A. Collagen")
+boxcox(lm(o_con ~ o_age))
+title("B. Osteocalcin")
+```
+
+```{r}
+#| label: reset plot grid
+#| eval: true
+#| echo: false
+
+# reset plot grid setting
+par(mfrow = c(1,1))
+```
+
+Now that we have our $\lambda$ we can apply the transformation to approximate a normal residual distribution:
+
+```{r}
+#| label: Box-Cox - Extracting Lambda
+#| echo: TRUE
+#| results: markup
+#| fig-show: hide
+
+# extract the lambda 
+b <- boxcox(lm(c_con ~ c_age))
+lambda_c <- b$x[which.max(b$y)]
+
+# extract the lambda
+b <- boxcox(lm(o_con ~ o_age))
+lambda_oc <- b$x[which.max(b$y)]
+```
+
+Both our $\lambda$ values are above 0, which we can verify
+
+```{r}
+#| label: Box-Cox - Checking Lambda
+#| echo: false
+#| eval: true
+
+paste0("Collagen Lambda: ", round(lambda_c, 5))
+paste0("Osteocalcin Lambda: ", round(lambda_oc, 5))
+```
+
+Since $\lambda$ is greater than 0, we use the formula `(y^lambda - 1) / lambda`
+
+```{r}
+#| label: Box-Cox - Applying Transformation
+
+# apply the transformation
+coll_data$c_conT <- (c_con^lambda_c - 1) / lambda_c
+ostc_data$o_conT <- (o_con^lambda_oc - 1) / lambda_oc
+```
+
+### Generating Models
+
+#### Generalized Additive Models (GAMs)
+
+Now that our data is transformed, we can create GAMs using the `gam()` function from the `mgcv` package.
+
+```{r}
+#| label: generalized additive models
+
+# both sexes
+cgam_mf <- gam(c_conT ~ s(mean_age, bs = "cr"), method = "REML", data = coll_data)
+
+ogam_mf <- gam(o_conT ~ s(mean_age, bs = "cr"), method = "REML", data = ostc_data)
+
+# males only
+cgam_m <- gam(c_conT ~ s(mean_age, bs = "cr"), method = "REML", data = filter(coll_data, sex == "Male"))
+
+ogam_m <- gam(o_conT ~ s(mean_age, bs = "cr"), method = "REML", data = filter(ostc_data, sex == "Male"))
+
+# females only
+cgam_f <- gam(c_conT ~ s(mean_age, bs = "cr"), method = "REML", data = filter(coll_data, sex == "Female"))
+
+ogam_f <- gam(o_conT ~ s(mean_age, bs = "cr"), method = "REML", data = filter(ostc_data, sex == "Female"))
+```
+
+But we still need to extract the ages at which each GAM peaks and while we're at it we can find the periods of significant change (where the derivative's CI doesn't contain 0)
+
+```{r}
+#| label: extracting peak ages
+peak_ages <- list()
+# starting with collagen
+# make a dataframe of the derivatives of cgam
+dts <- derivatives(cgam_mf, select = "s(mean_age)", interval = "simultaneous", partial_match = TRUE)
+# extract the inflection point (should be the peak of the model)
+inflect <- with(dts, which(diff(sign(.derivative)) == -2))
+# add 1 because stack overflow said so
+peak_ages$CollagenMF <- dts$mean_age[inflect + 1]
+
+# let's add a direction column to find the signficant periods of change
+dts <- dts %>% 
+  mutate(
+    sig = case_when(
+      .lower_ci > 0 ~ "increasing",
+      .upper_ci < 0 ~ "decreasing",
+      TRUE ~ "nonsig"
+    )
+  )
+
+# and extract the significant values
+sig_dts <- dts %>% 
+  filter(sig != "nonsig")
+
+# finally, we can group the consecutive rows then extract the min and max to define our periods of significant change
+sig_period <- sig_dts %>% 
+  mutate(
+    group = with(rle(sig), rep(seq_along(lengths), lengths))
+  ) %>% 
+  group_by(group, sig) %>% 
+  summarise(start = min(mean_age), end = max(mean_age), .groups = "drop")
+sig_period
+```
+
+Now we just need to repeat this process for all of the other models
+
+```{r}
+#| label: extracting peak ages II
+#| code-fold: true
+
+# now we repeat for all the other models
+# cgam_m
+dts <- derivatives(cgam_m, select = "s(mean_age)", interval = "simultaneous", partial_match = TRUE)
+# here, we have to use first() because there are multiple inflection points
+inflect <- first(with(dts, which(diff(sign(.derivative)) == -2)))
+peak_ages$CollagenM <- dts$mean_age[inflect + 1]
+
+# cgam_f
+dts <- derivatives(cgam_f, select = "s(mean_age)", interval = "simultaneous", partial_match = TRUE)
+inflect <- with(dts, which(diff(sign(.derivative)) == -2))
+peak_ages$CollagenF <- dts$mean_age[inflect + 1]
+
+# ogam_mf
+dts <- derivatives(ogam_mf, select = "s(mean_age)", interval = "simultaneous", partial_match = TRUE)
+# here, we have to use first() because there are multiple inflection points
+inflect <- first(with(dts, which(diff(sign(.derivative)) == -2)))
+peak_ages$OsteocalcinMF <- dts$mean_age[inflect + 1]
+
+# ogam_m
+dts <- derivatives(ogam_m, select = "s(mean_age)", interval = "simultaneous", partial_match = TRUE)
+# here, we have to use first() because there are multiple inflection points
+inflect <- first(with(dts, which(diff(sign(.derivative)) == -2)))
+peak_ages$OsteocalcinM <- dts$mean_age[inflect + 1]
+
+# ogam_f
+dts <- derivatives(ogam_f, select = "s(mean_age)", interval = "simultaneous", partial_match = TRUE)
+inflect <- with(dts, which(diff(sign(.derivative)) == -2))
+peak_ages$OsteocalcinF <- dts$mean_age[inflect + 1]
+
+models <- list(cgam_mf = cgam_mf, cgam_m = cgam_m, cgam_f = cgam_f, ogam_mf = ogam_mf, ogam_m = ogam_m, ogam_f = ogam_f)
+period_list <- imap_dfr(models, function(model, name){
+  dts <- derivatives(model, select = "s(mean_age)", interval = "simultaneous", partial_match = TRUE) %>% 
+    mutate(
+      sig = case_when(
+        .lower_ci > 0 ~ "increasing",
+        .upper_ci < 0 ~ "decreasing",
+        TRUE ~ "nonsig"
+      )
+    ) %>% 
+    filter(sig != "nonsig") %>% 
+    mutate(group = with(rle(sig), rep(seq_along(lengths), lengths))) %>%
+    group_by(group, sig) %>% 
+    summarise(start = min(mean_age), end = max(mean_age), .groups = "drop") %>% 
+    mutate(model = name)
+})
+period_list
+print("Don't forget the peak ages:")
+as.matrix(peak_ages)
+```
+
+I could not for the life of me get a nonzero value for the two female models. As far as I can tell, this comes from the behavior of the `gratia` package. I think the problem is either caused by derivative being too flat at the inflection point such that when `gratia` smooths, it misses the inflection point OR the confidence interval of the derivative overlaps with 0 at the inflection point. I suppose the sample size could also be playing a role, but long story short I couldn't get it to recognize either of the inflection points seen in the visualizations of the female models. When inspecting the derivatives, the inflection point for cgam_f can be seen between dts\$.derivative\[73\] and dts\$.derivative\[74\] at very small decimal values which supports my idea that the `gratia` package is smoothing over the inflection point.
+
+```{r}
+dts <- derivatives(cgam_f, select = "s(mean_age)", interval = "simultaneous", partial_match = TRUE)
+print(with(dts, .derivative)[70:80])
+print(with(dts, .derivative)[73:74])
+```
+
+And the same can be seen in ogam_f at derivative indices 67-68:
+
+```{r}
+dts <- derivatives(ogam_f, select = "s(mean_age)", interval = "simultaneous", partial_match = TRUE)
+print(with(dts, .derivative)[64:74])
+print(with(dts, .derivative)[67:68])
+```
+
+I include a range of 10 values around the inflection point to demonstrate that it is not an instantaneous change in sign and represents a true inflection point.
+
+#### Segmented Regressions
+
+Moving on, let's make our segmented regressions using `segmented()` from the package `segmented` using linear models
+
+```{r}
+#| label: segmented linear regressions
+
+# both sexes
+csr_mf <- segmented(lm(c_conT ~ mean_age, data = coll_data), seg.Z = ~mean_age, npsi = 3)
+osr_mf <- segmented(lm(o_conT ~ mean_age, data = ostc_data), seg.Z = ~mean_age, npsi = 3)
+
+# males only
+csr_m <- segmented(lm(c_conT ~ mean_age, data = filter(coll_data, sex == "Male")), seg.Z = ~mean_age, npsi = 3)
+osr_m <- segmented(lm(o_conT ~ mean_age, data = filter(ostc_data, sex == "Male")), seg.Z = ~mean_age, npsi = 3)
+
+# females only
+csr_f <- segmented(lm(c_conT ~ mean_age, data = filter(coll_data, sex == "Female")), seg.Z = ~mean_age, npsi = 3)
+osr_f <- segmented(lm(o_conT ~ mean_age, data = filter(ostc_data, sex == "Female")), seg.Z = ~mean_age, npsi = 3)
+```
+
+#### Checking our Models
+
+and let's go ahead and run our checks for both types of model
+
+```{r}
+#| label: checking models
+#| eval: false
+#| echo: true
+
+# these outputs are crazy long and frankly not that relevant to this assignment, so i turned eval to false for this chunk.
+
+gam.check(cgam_mf, level = .95);gam.check(cgam_m, level = .95);gam.check(cgam_f, level = .95)
+gam.check(ogam_mf, level = .95);gam.check(ogam_m, level = .95);gam.check(cgam_f, level = .95)
+
+shapiro.test(csr_mf, level = .95);shapiro.test(csr_m, level = .95);shapiro.test(csr_f, level = .95)
+shapiro.test(osr_mf, level = .95);shapiro.test(osr_m, level = .95);shapiro.test(osr_f, level = .95)
+```
+
+### Plotting our Results
+
+#### Results for Both Sexes
+
+```{r}
+#| label: making plots - both sexes
+#| code-fold: true
+# GAMs
+
+# create a dataframe of values fitted to the model
+fitted_df <- fitted_values(cgam_mf, data = coll_data, include_data = TRUE, scale = "response")
+
+p.cgmf <- ggplot(fitted_df, aes(x = mean_age, y = .fitted)) +
+  geom_ribbon(aes(ymin = .lower_ci, ymax = .upper_ci), fill = "lightblue", alpha = 0.7) +
+  geom_line(color = "blue4", linewidth = 1.2) +
+  geom_point(aes(y = c_conT), alpha = 0.5, size = 1) +
+  labs(
+    x = "Age (Years)",
+    y = "Collagen (nM, SG-corrected)",
+    title = "GAM Fit with 95% CI"
+  ) +
+  theme(
+    axis.title = element_text(size = 6),
+    axis.text = element_text(size = 4),
+    aspect.ratio = 1.2
+  ) +
+  theme_bw()
+
+fitted_df <- fitted_values(ogam_mf, data = ostc_data, include_data = TRUE, scale = "response")
+
+p.ogmf <- ggplot(fitted_df, aes(x = mean_age, y = .fitted)) +
+  geom_ribbon(aes(ymin = .lower_ci, ymax = .upper_ci), fill = "lightblue", alpha = 0.7) +
+  geom_line(color = "blue4", linewidth = 1.2) +
+  geom_point(aes(y = o_conT), alpha = 0.5, size = 1) +
+  labs(
+    x = "Age (Years)",
+    y = "Osteocalcin (ng/mL, SG-corrected)",
+    title = "GAM Fit with 95% CI"
+  ) +
+  theme(
+    axis.title = element_text(size = 6),
+    axis.text = element_text(size = 4),
+    aspect.ratio = 1.2
+  ) +
+  theme_bw()
+
+# SRs
+
+# generate prediction data
+newdata <- data.frame(mean_age = seq(min(coll_data$mean_age),
+                                     max(coll_data$mean_age),
+                                     length.out = 1000))
+b <- predict(csr_mf, newdata = newdata, interval = "confidence")
+preds <- cbind(newdata, as.data.frame(b))
+
+p.csmf <- ggplot(coll_data, aes(x = mean_age, y = c_conT)) +
+  geom_line(data = preds, aes(y = fit), color = "red3", linewidth = 1.2) +
+  geom_point(alpha = 0.5, size = 1) +
+  labs(
+    x = "Age (Years)",
+    y = "Collagen (nM, SG-corrected)",
+    title = "SR Fit",
+    aspect.ratio = 1.2
+  ) +
+  theme(
+    axis.title = element_text(size = 6),
+    axis.text = element_text(size = 4)
+  ) +
+  theme_bw()
+
+b <- predict(osr_mf, newdata = newdata, interval = "confidence")
+preds <- cbind(newdata, as.data.frame(b))
+
+p.osmf <- ggplot(fitted_df, aes(x = mean_age, y = o_conT)) +
+  geom_line(data = preds, aes(y = fit), color = "red3", linewidth = 1.2) +
+  geom_point(alpha = 0.5, size = 1) +
+  labs(
+    x = "Age",
+    y = "Osteocalcin (ng/mL, SG-corrected)",
+    title = "SR Fit",
+    aspect.ratio = 1.2
+  ) +
+  theme(
+    axis.title = element_text(size = 6),
+    axis.text = element_text(size = 4)
+  ) +
+  theme_bw()
+
+
+ggarrange(p.cgmf, p.ogmf, p.csmf, p.osmf, nrow = 2, ncol = 2)
+```
+
+Comparing my results to those from the study
+
+#### Sandel et al. Figure 1: Both Sexes
+
+![Biomarker levels in chimpanzees, including males and females. Collagen is an indicator of bone resorption and osteocalcin is an indicator of bone formation. We transformed collagen and osteocalcin values to approximate a normal residual distribution (Box and Cox, 1964). The solid blue lines (upper panels) represent the generalized additive models with confidence intervals as dashed lines; red lines (lower panels) represent segmented regressions. Dotted vertical lines are placed at age 5 years (end of infancy) and age 10 years (around early adolescence) to aid interpretation. (Sandel et al. 2023 Figure 1)](img/figure1.png)
+
+#### Results for Males Only
+
+```{r}
+#| label: making plots - males only
+#| code-fold: true
+# GAMs
+fitted_df <- fitted_values(cgam_m, data = coll_data, include_data = TRUE, scale = "response")
+
+p.cgm <- ggplot(fitted_df, aes(x = mean_age, y = .fitted)) +
+  geom_ribbon(aes(ymin = .lower_ci, ymax = .upper_ci), fill = "lightblue", alpha = 0.7) +
+  geom_line(color = "blue4", linewidth = 1.2) +
+  geom_point(aes(y = c_conT), alpha = 0.5, size = 1) +
+  labs(
+    x = "Age",
+    y = "Collagen (nM, SG-corrected)",
+    title = "GAM Fit with 95% CI"
+  ) +
+  theme_bw()
+
+fitted_df <- fitted_values(ogam_m, data = ostc_data, include_data = TRUE, scale = "response")
+
+p.ogm <- ggplot(fitted_df, aes(x = mean_age, y = .fitted)) +
+  geom_ribbon(aes(ymin = .lower_ci, ymax = .upper_ci), fill = "lightblue", alpha = 0.7) +
+  geom_line(color = "blue4", linewidth = 1.2) +
+  geom_point(aes(y = o_conT), alpha = 0.5, size = 1) +
+  labs(
+    x = "Age",
+    y = "Osteocalcin (ng/mL, SG-corrected)",
+    title = "GAM Fit with 95% CI"
+  ) +
+  theme_bw()
+
+b <- predict(csr_m, newdata = newdata, interval = "confidence")
+preds <- cbind(newdata, as.data.frame(b))
+
+p.csm <- ggplot(coll_data, aes(x = mean_age, y = c_conT)) +
+  geom_line(data = preds, aes(y = fit), color = "red3", linewidth = 1.2) +
+  geom_point(alpha = 0.5, size = 1) +
+  labs(
+    x = "Age (Years)",
+    y = "Collagen (nM, SG-corrected)",
+    title = "SR Fit"
+  ) +
+  theme(
+    axis.title = element_text(size = 6),
+    axis.text = element_text(size = 4)
+  ) +
+  theme_bw()
+
+b <- predict(osr_m, newdata = newdata, interval = "confidence")
+preds <- cbind(newdata, as.data.frame(b))
+
+p.osm <- ggplot(fitted_df, aes(x = mean_age, y = o_conT)) +
+  geom_line(data = preds, aes(y = fit), color = "red3", linewidth = 1.2) +
+  geom_point(alpha = 0.5, size = 1) +
+  labs(
+    x = "Age",
+    y = "Osteocalcin (ng/mL, SG-corrected)",
+    title = "SR Fit"
+  ) +
+  theme(
+    axis.title = element_text(size = 6),
+    axis.text = element_text(size = 4)
+  ) +
+  theme_bw()
+
+ggarrange(p.cgm, p.ogm, p.csm, p.osm,nrow = 2, ncol = 2)
+```
+
+#### Sandel et al. Figure 2: Males Only
+
+![Biomarker levels in male chimpanzees. We transformed collagen and osteocalcin values to approximate a normal residual distribution. The solid blue lines (upper panels) represent the generalized additive models (GAMs) with confidence intervals as dashed lines; red lines (bottom panels) represent segmented regressions. Among male chimpanzees, GAMs and segmented regressions indicate peaks of both biomarkers in early adolescence (9.4–10.8 years). Dotted vertical lines are placed at age 5 years (end of infancy) and age 10 years (around early adolescence) to aid interpretation](img/figure2.png)
+
+#### Results for Females Only
+
+```{r}
+#| label: making plots - females only
+#| code-fold: true
+# GAMs
+fitted_df <- fitted_values(cgam_f, data = coll_data, include_data = TRUE, scale = "response")
+
+p.cgf <- ggplot(fitted_df, aes(x = mean_age, y = .fitted)) +
+  geom_ribbon(aes(ymin = .lower_ci, ymax = .upper_ci), fill = "lightblue", alpha = 0.7) +
+  geom_line(color = "blue", linewidth = 1.2) +
+  geom_point(aes(y = c_conT), alpha = 0.5, size = 1) +
+  labs(
+    x = "Age",
+    y = "Collagen (nM, SG-corrected)",
+    title = "GAM Fit with 95% CI, Females"
+  ) +
+  theme_bw()
+
+fitted_df <- fitted_values(ogam_f, data = ostc_data, include_data = TRUE, scale = "response")
+
+p.ogf <- ggplot(fitted_df, aes(x = mean_age, y = .fitted)) +
+  geom_ribbon(aes(ymin = .lower_ci, ymax = .upper_ci), fill = "lightblue", alpha = 0.7) +
+  geom_line(color = "blue", linewidth = 1.2) +
+  geom_point(aes(y = o_conT), alpha = 0.5, size = 1) +
+  labs(
+    x = "Age",
+    y = "Osteocalcin (ng/mL, SG-corrected)",
+    title = "GAM Fit with 95% CI"
+  ) +
+  theme_bw()
+
+b <- predict(csr_f, newdata = newdata, interval = "confidence")
+preds <- cbind(newdata, as.data.frame(b))
+
+p.csf <- ggplot(coll_data, aes(x = mean_age, y = c_conT)) +
+  geom_line(data = preds, aes(y = fit), color = "red3", linewidth = 1.2) +
+  geom_point(alpha = 0.5, size = 1) +
+  labs(
+    x = "Age (Years)",
+    y = "Collagen (nM, SG-corrected)",
+    title = "SR Fit"
+  ) +
+  theme(
+    axis.title = element_text(size = 6),
+    axis.text = element_text(size = 4)
+  ) +
+  theme_bw()
+
+b <- predict(osr_f, newdata = newdata, interval = "confidence")
+preds <- cbind(newdata, as.data.frame(b))
+
+p.osf <- ggplot(fitted_df, aes(x = mean_age, y = o_conT)) +
+  geom_line(data = preds, aes(y = fit), color = "red3", linewidth = 1.2) +
+  geom_point(alpha = 0.5, size = 1) +
+  labs(
+    x = "Age",
+    y = "Osteocalcin (ng/mL, SG-corrected)",
+    title = "SR Fit"
+  ) +
+  theme(
+    axis.title = element_text(size = 6),
+    axis.text = element_text(size = 4)
+  ) +
+  theme_bw()
+
+ggarrange(p.cgf, p.ogf, p.csf, p.osf, nrow = 2, ncol = 2)
+```
+
+#### Sandel et al. Figure 3: Females Only
+
+![Biomarker levels in female chimpanzees. We transformed collagen and osteocalcin values to approximate a normal residual distribution. The solid blue lines (upper panels) represent the generalized additive models (GAMs) with confidence intervals as dashed lines; red lines (lower panels) represent segmented regression. Among female chimpanzees, GAMs suggest an incrementally lower turnover with age, but segmented regressions indicate a peak at 13 years for collagen and 7 years for osteocalcin.](img/figure3.png)
+
+### Summarizing Results
+
+Housekeeping:
+
+```{r}
+#| code-fold: true
+# prep for producing the table
+names(peak_ages) <- c("cgam_mf", "cgam_m", "cgam_f", "ogam_mf", "ogam_m", "ogam_f")
+table_names <- as.vector(c("Collagen (All)", "Collagen (Male)", "Collagen (Female)", "Osteocalcin (All)", "Osteocalcin (Male)", "Osteocalcin (Female)"))
+model.names <- as.vector(c("cgam_mf", "cgam_m", "cgam_f", "ogam_mf", "ogam_m", "ogam_f"))
+inputs <- list(models, table_names, model.names)
+# the female models were being excluded because of they peak age being numeric(0), so overwrite with NA to ensure they're in the table
+peak_ages$cgam_f <- NA
+peak_ages$ogam_f <- NA
+```
+
+Helper Functions:
+
+```{r}
+#| label: helper functions
+#| code-fold: true
+p.check <- function(s){
+  p <- s$s.table[1, "p-value"]
+  
+  if(p < 1e-3){
+      return("<0.001")
+    } else{
+      return(as.character(round(p, 3)))
+    }
+}
+b.check <- function(b){
+  # if no significant period was detected, return NA else return significant period (b)
+  if(b == ""){
+    return(NA)
+  }
+  return(b)
+}
+```
+
+Generating Table:
+
+```{r}
+#| label: generating table
+#| code-fold: true
+
+gam_summary <- pmap_dfr(inputs, function(model, table_name, model.name){
+  s <- summary(model)
+  peak <- peak_ages[[model.name]]
+  b <- period_list %>%
+    filter(model == model.name) %>% 
+    mutate(interval = paste0(round(start, 2), "-", round(end, 2))) %>% 
+    pull(interval) %>% 
+      paste(collapse = "; ")
+
+  tibble(
+    Model = table_name,
+    N = nrow(model$model),
+    EDF = round(s$s.table[1, "edf"], 2),
+    Ref.DF = round(s$s.table[1, "Ref.df"], 2),
+    .F = round(s$s.table[1, "F"], 1),
+    p.value = p.check(s),
+    Peak.Age = round(peak, 2),
+    Sig.Increase = NA,
+    Sig.Decrease = b.check(b)
+  )
+})
+
+gam_summary
+```
+
+#### Sandel et al. Table 1
+
+![](img/table1.png)
+
+My models all produced nearly identical values across the board except for the peak ages of the female models, the period of significant increase for the males only collagen model, and all of the periods of significant decrease. I'm not sure whether the inconsistent results were because I did something wrong, we used different versions of R and packages, or the fact that I have a silicon chip with a Windows OS. At one point the period of increase for the male only collagen model was being calculated correctly the the .1, but as I continued to work and re-run things my program stopped recognizing it. The same goes for the period of decrease associated with the male only osteocalcin model.
+
+I don't believe it's an issue with my models or how I implemented the Box-Cox transformation for three reasons:
+
+1.  All of the values except for the periods of significant change are extremely close to those found by Sandel's team
+2.  The values for the periods of change were initially much closer to Sandel et al.'s
+3.  The period of increase was initially recognized but somewhere down the line the derivative function stopped identifying significant values in the appropriate (or any) range
+
+Anyways, let's compare the segmented regressions now.
+
+Housekeeping:
+
+```{r}
+#| code-fold: true
+models <- list(csr_mf, csr_m, csr_f, osr_mf, osr_m, osr_f)
+names(models) <- c("csr_mf", "csr_m", "csr_f", "osr_mf", "osr_m", "osr_f")
+inputs <- list(models, table_names)
+```
+
+```{r}
+#| label: making table 2
+#| code-fold: true
+slr_summary <- pmap_dfr(inputs, function(m, table_name){
+  tibble(
+    Model = table_name,
+    N = nrow(m$model),
+    Breakpoint1 = round(m$psi[1,2], 1),
+    Breakpoint2 = round(m$psi[2,2], 1),
+    Breakpoint3 = round(m$psi[3,2], 1)
+    )
+  }
+)
+slr_summary
+```
+
+#### Sandel et al. Table 2
+
+![](img/table2.png)
+
+These tables are also very close. It looks like my model identified a breakpoint (bp) for the female only collagen model at 4.3 years old that Sandel's team's models didn't. As a consequence, their bp1 is my bp2 and their bp2 is my bp3 while their bp3 is `NA`.
+
+Overall, I think I did a pretty good job replicating their analysis but I'm curious why the female only models behaved so strangely for me.
