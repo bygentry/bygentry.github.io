@@ -1,6 +1,7 @@
 ---
 title: "Data Analysis Replication"
 author: "Gentry Miller"
+date: 02 May 2025
 format: 
   html:
     code-overflow: wrap
