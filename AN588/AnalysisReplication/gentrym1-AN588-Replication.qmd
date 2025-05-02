@@ -593,6 +593,10 @@ ggarrange(p.cgf, p.ogf, p.csf, p.osf, nrow = 2, ncol = 2)
 
 ![Biomarker levels in female chimpanzees. We transformed collagen and osteocalcin values to approximate a normal residual distribution. The solid blue lines (upper panels) represent the generalized additive models (GAMs) with confidence intervals as dashed lines; red lines (lower panels) represent segmented regression. Among female chimpanzees, GAMs suggest an incrementally lower turnover with age, but segmented regressions indicate a peak at 13 years for collagen and 7 years for osteocalcin.](img/figure3.png)
 
+**Discussion**
+
+My models are all very similar to Sandel et al.'s - the biggest difference is in the female models where my analysis identified one additional breakpoint at about 4.3. Notably, the values on the Y axis of my osteocalcin plots are opposite Sandel's and I can't figure out why. I wonder if they manually changed the scale for the axis labels to aid interpretation. I tried inverting the values when I perform the Box-Cox transformation but it just reflected the whole graph over the X axis including the fit line.
+
 ### Summarizing Results
 
 Housekeeping:
@@ -666,6 +670,8 @@ gam_summary
 #### Sandel et al. Table 1
 
 ![](img/table1.png)
+
+**Discussion**
 
 My models all produced nearly identical values across the board except for the peak ages of the female models, the period of significant increase for the males only collagen model, and all of the periods of significant decrease. I'm not sure whether the inconsistent results were because I did something wrong, we used different versions of R and packages, or the fact that I have a silicon chip with a Windows OS. At one point the period of increase for the male only collagen model was being calculated correctly the the .1, but as I continued to work and re-run things my program stopped recognizing it. The same goes for the period of decrease associated with the male only osteocalcin model.
 
