@@ -28,7 +28,7 @@ Welcome to my portfolio! Use the sidebar to navigate through project submissions
 
 [Discriminant Analysis Module](https://bygentry.github.io/AN588/AN588_Vignette/gm_aw_vignette.html)
 
-Analysis Recreation Project (Coming soon)
+[Analysis Recreation Project]\\(https://)
 
 ## Legacy Content from Template
 
